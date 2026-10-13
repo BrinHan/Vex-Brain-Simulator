@@ -5,7 +5,7 @@ import { guessEntry, listEntries, type Lang } from './lang/compile';
 import { SCREEN_H, SCREEN_W } from './sim/screen';
 import { highlight } from './highlight';
 import { Controls, PAD_ICON } from './controls';
-import { shareLink } from './share';
+import { readShared, shareLink } from './share';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 
@@ -147,19 +147,19 @@ codeEl.addEventListener('keydown', (e) => {
 langSel.addEventListener('change', () => { store.set('lang', langSel.value); refreshEntries(); refresh(); });
 
 // ---------------------------------------------------------------- files: open / drop / save
-function loadSource(name: string, text: string): void {
+/** Replaces the editor contents (an opened file or a shared link); the language follows the file name unless given. */
+function loadSource(name: string, text: string, lang?: string): void {
   fileName = name;
   codeEl.value = text;
-  langSel.value = /\.py$/i.test(name) ? 'py' : 'cpp';
+  langSel.value = lang && ['auto', 'cpp', 'py'].includes(lang) ? lang : /\.py$/i.test(name) ? 'py' : 'cpp';
   store.set('lang', langSel.value);
   store.set('code', text);
   errLine = 0;
   refresh();
   refreshEntries();
-  void run();
 }
 function readFile(f: File | undefined): void {
-  if (f) void f.text().then((t) => loadSource(f.name, t));
+  if (f) void f.text().then((t) => { loadSource(f.name, t); void run(); });
 }
 const fileInput = $<HTMLInputElement>('file');
 $<HTMLButtonElement>('open').addEventListener('click', () => fileInput.click());
@@ -379,10 +379,21 @@ renderCode();
 renderGutter();
 refreshEntries();
 
+/** A `#s=` link replaces the editor contents once, then the fragment is dropped so a reload keeps later edits. */
+async function openSharedLink(): Promise<boolean> {
+  const shared = await readShared(location.hash);
+  if (!shared) return false;
+  history.replaceState(null, '', location.pathname + location.search);
+  loadSource(shared.name ?? '', shared.code, shared.lang);
+  return true;
+}
+window.addEventListener('hashchange', () => { void openSharedLink().then((ok) => { if (ok) void run(); }); });
+
 // the Brain fonts must be ready before the first frame is drawn, or the canvas silently uses a fallback face
 void Promise.all([
   document.fonts.load('16px "Brain Mono"'),
   document.fonts.load('16px "Brain Prop"'),
+  openSharedLink(),
 ]).catch(() => {}).finally(() => void run());
 
 // ---------------------------------------------------------------- controller: keys, gamepad, Controls palette, screen
