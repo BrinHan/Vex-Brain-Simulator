@@ -17,6 +17,9 @@
   "build": {
     "appId": "com.vexbrainsim.app",
     "productName": "VEX Brain Simulator",
+    "directories": {
+      "output": "release"
+    },
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
