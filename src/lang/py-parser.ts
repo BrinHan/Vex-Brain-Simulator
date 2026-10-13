@@ -218,6 +218,13 @@ class PyParser {
   }
 
   parseStatement(): Stmt[] {
+    const line = this.cur.line;
+    const out = this.parseStatementInner();
+    for (const s of out) s.line ??= line;
+    return out;
+  }
+
+  private parseStatementInner(): Stmt[] {
     const t = this.cur;
     if (t.t === 'op' && t.v === '@') { while (this.cur.t !== 'nl' && this.cur.t !== 'eof') this.pos++; return []; }
     if (t.t === 'id') {

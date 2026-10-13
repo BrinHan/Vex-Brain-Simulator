@@ -466,6 +466,13 @@ class CppParser {
   }
 
   parseStmt(): Stmt {
+    const line = this.cur.line;
+    const s = this.parseStmtInner();
+    s.line ??= line;
+    return s;
+  }
+
+  private parseStmtInner(): Stmt {
     const t = this.cur;
     if (t.t === 'op') {
       if (t.v === '{') return { k: 'block', body: this.parseBlock() };

@@ -65,7 +65,10 @@ export interface StructDecl {
   ctors: FuncDecl[];
 }
 
-export type Stmt =
+/** `line` is the 1-based source line a statement starts on, used to point runtime errors at the user's code. */
+export type Stmt = StmtBody & { line?: number };
+
+type StmtBody =
   | { k: 'var'; type?: TypeRef; name: string; init?: Expr; ctorArgs?: Expr[] }
   | { k: 'expr'; e: Expr }
   | { k: 'if'; test: Expr; then: Stmt[]; else?: Stmt[] }
