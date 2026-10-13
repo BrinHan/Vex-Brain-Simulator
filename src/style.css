@@ -245,6 +245,44 @@ select { max-width: 180px; text-overflow: ellipsis; }
   font: 16px/22px "Brain Mono", var(--mono); letter-spacing: 0; white-space: pre; width: calc(19ch + 24px); min-height: calc(3 * 22px + 16px);
 }
 
+/* ---------------------------------------------------------------- Controls palette (search + list, like a command palette) */
+.palette-overlay { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: center; align-items: flex-start; padding: 64px 16px 16px; background: rgba(0, 0, 0, 0.55); }
+.palette {
+  --palette-ink: var(--card);
+  display: flex; flex-direction: column; width: min(720px, 100%); max-height: min(640px, calc(100vh - 96px));
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+.palette-search { display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 20px; flex: none; color: var(--muted); }
+.palette-search svg { width: 22px; height: 22px; flex: none; }
+.palette-search input { flex: 1; min-width: 0; height: 100%; background: none; border: 0; outline: 0; color: var(--text); font: 18px var(--mono); letter-spacing: 0; }
+.palette-search input::placeholder { color: var(--muted); }
+.palette-list { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 6px; }
+.palette-item { display: flex; align-items: center; gap: 14px; height: 44px; padding: 0 20px; color: var(--muted); font: 14px var(--mono); letter-spacing: 0; cursor: pointer; user-select: none; }
+.palette-item .pi-icon { display: inline-flex; width: 20px; height: 20px; flex: none; color: var(--muted); }
+.palette-item .pi-icon svg { width: 100%; height: 100%; }
+.palette-item .pi-label { flex: 1; min-width: 0; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.palette-item .pi-keys { flex: none; display: flex; align-items: center; gap: 6px; }
+.palette-item.selected { background: var(--text); }
+.palette-item.selected, .palette-item.selected .pi-label, .palette-item.selected .pi-icon { color: var(--bg); }
+.palette-item.selected { --palette-ink: var(--text); }
+.palette-item.held .pi-icon { color: #66bb6a; }
+.palette-item.held:not(.selected) .pi-label { color: #66bb6a; }
+.palette-item.info { cursor: default; }
+.palette-item.info .pi-label { color: var(--muted); }
+.palette-item.info.selected .pi-label { color: var(--bg); }
+.pi-wait { color: var(--amber); }
+.palette-item.selected .pi-wait { color: #8a5a00; }
+.palette-item.selected .pi-wait .dim { color: #555; }
+kbd {
+  display: inline-block; min-width: 26px; height: 24px; padding: 0 7px; text-align: center; font: 12px/22px var(--mono);
+  color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px;
+}
+kbd.dup { border-color: var(--amber); color: var(--amber); }
+.palette-item.selected kbd { background: #fff; color: var(--bg); border-color: #9e9e9e; }
+.palette-foot { display: flex; align-items: center; gap: 16px; padding: 10px 20px; flex: none; color: var(--muted); font-size: 12px; border-top: 1px solid #2a2a2a; white-space: nowrap; overflow: hidden; }
+.palette-foot kbd { min-width: 20px; height: 20px; padding: 0 5px; margin-right: 4px; font-size: 11px; line-height: 18px; }
+@media (max-width: 700px) { .palette-foot .dim { display: none; } }
+
 /* ---------------------------------------------------------------- status bar */
 .statusbar { display: flex; align-items: center; gap: 20px; height: 30px; padding: 0 calc(var(--gap) + 6px); color: var(--muted); font-size: 12px; flex: none; white-space: nowrap; overflow: hidden; }
 .statusbar span { overflow: hidden; text-overflow: ellipsis; }
