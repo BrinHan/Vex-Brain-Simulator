@@ -215,10 +215,11 @@ Every call is awaited, so `wait()` really waits, infinite loops don't freeze the
 
 ```
 src/lang/   cpp-lexer, cpp-parser, py-parser → ast → codegen → JS
-src/sim/    screen (Brain.Screen), env (VEX globals), helpers (C++/Python semantics), runtime (run/stop/tasks)
-src/        main.ts (UI), examples.ts, highlight.ts
+src/sim/    screen (Brain.Screen), controller, env (VEX globals), helpers (C++/Python semantics), runtime (run/stop/tasks)
+src/        main.ts (UI), controls.ts (keys, gamepad, Controls menu), share.ts (links), highlight.ts
 electron/   desktop app entry point
 tests/      engine tests and real-world fixtures
+.github/    workflows: publish the web app to GitHub Pages, build installers for tagged releases
 ```
 
 ## Known limits
