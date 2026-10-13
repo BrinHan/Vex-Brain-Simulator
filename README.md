@@ -129,6 +129,7 @@ Then open <http://localhost:5173>.
 | ------------------- | --------------------------------------- |
 | `Ctrl` + `Enter`    | Run                                     |
 | `Ctrl` + `B`        | Switch between Split and Preview layout |
+| `Ctrl` + `K`        | Open the Controls menu                  |
 | `Tab` in the editor | Indent                                  |
 
 Use **Code / Split / Preview** in the top bar to choose the layout, and **− / +** to zoom the Brain. Click the zoom
@@ -145,6 +146,27 @@ Click **Open** or drop a `.cpp`, `.hpp` or `.py` file onto the editor. Project f
   `monoS` / `monoM` are treated as mono15 / mono20.
 - **Supported C++ beyond the basics:** `#define` macros, `static` locals, `char` buffers with `snprintf`/`strlen`,
   `operator==`-style overloads, `enum`, structs/classes with constructors, `vex::thread` and `vex::mutex`.
+
+## Controller
+
+The primary controller is live: `Controller1` from the VEXcode template, `controller(primary)` in C++, or
+`Controller(PRIMARY)` in Python. A partner controller is accepted but nothing drives it.
+
+| Control         | Default keys                                                | Gamepad          |
+| --------------- | ----------------------------------------------------------- | ---------------- |
+| Left stick      | <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> (Axis 3 and 4) | Left stick |
+| Right stick     | <kbd>I</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> (Axis 2 and 1) | Right stick |
+| L1 / L2         | <kbd>Q</kbd> / <kbd>E</kbd>                                 | LB / LT          |
+| R1 / R2         | <kbd>U</kbd> / <kbd>O</kbd>                                 | RB / RT          |
+| D-pad           | Arrow keys                                                  | D-pad            |
+| X / Y / A / B   | <kbd>T</kbd> / <kbd>F</kbd> / <kbd>H</kbd> / <kbd>G</kbd> (laid out like the buttons) | Top / left / right / bottom face buttons |
+
+Keys only drive the controller while you're not typing in the editor, so click the Brain screen first. A key held
+down gives a full ±100% stick; a gamepad gives analog values.
+
+Supported: `AxisN.position()` / `value()` / `changed()`, `ButtonX.pressing()` / `pressed()` / `released()`, and
+`Screen.print` / `setCursor` / `clearScreen` / `clearLine` / `newLine` (Python names like `axis3`, `buttonL1` and
+`screen.set_cursor` work too). The controller screen is 3 rows of 19 characters. `rumble()` is accepted and ignored.
 
 ## Supported VEX API
 
@@ -166,9 +188,10 @@ Click **Open** or drop a `.cpp`, `.hpp` or `.py` file onto the editor. Project f
 - `wait`, `waitUntil`, `thread`/`Thread`, `task`
 - `Brain.Timer`, `Brain.Battery`
 - `Competition` callbacks (buttons appear above the screen)
+- The controller (see [Controller](#controller))
 - `printf`, `std::cout` and Python `print` (shown in the Terminal)
 
-Motors, sensors, the controller and other devices are accepted and ignored, so real programs still run.
+Motors, sensors and other devices are accepted and ignored, so real programs still run.
 
 </details>
 
