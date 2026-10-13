@@ -369,4 +369,9 @@ setLayout(savedLayout === 'code' || savedLayout === 'preview' ? savedLayout : 's
 renderCode();
 renderGutter();
 refreshEntries();
-void run();
+
+// the Brain fonts must be ready before the first frame is drawn, or the canvas silently uses a fallback face
+void Promise.all([
+  document.fonts.load('16px "Brain Mono"'),
+  document.fonts.load('16px "Brain Prop"'),
+]).catch(() => {}).finally(() => void run());
