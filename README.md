@@ -23,6 +23,12 @@ Click the screen to touch it, so auto selectors and menus work too.
 
 - **C++ and Python.** Write VEXcode the way you would for the real Brain. The language is detected automatically.
 - **Interactive touchscreen.** Clicks become Brain touches, so `pressing()`, `xPosition()` and `pressed()` callbacks work.
+- **Controller simulation.** Drive `Controller1` with your keyboard or a real gamepad, and see what your program prints
+  on the controller's screen. Every key can be changed in the **Controls** menu.
+- **Shareable links.** **Share** copies a link that opens your exact program for anyone. The code is stored in the link
+  itself, so nothing is uploaded.
+- **Brain fonts and error lines.** Text is drawn with the Noto fonts the Brain uses, and runtime errors point at the line
+  that caused them.
 - **Real project files.** Open a `.cpp`, `.hpp` or `.py` straight from your robot project, even one without `main()`.
 - **Live animation.** `wait()` really waits and `while (true)` loops keep running without freezing the page. **Stop** always works.
 - **Competition testing.** Programs that use `Competition` get **Autonomous** and **Driver control** buttons.
