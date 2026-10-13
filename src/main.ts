@@ -277,6 +277,7 @@ function liftFinger(): void {
 }
 
 canvas.addEventListener('pointerdown', (e) => {
+  codeEl.blur(); // the keyboard now drives the controller instead of typing
   canvas.setPointerCapture(e.pointerId); // keep tracking even if the pointer leaves the screen
   const [x, y] = toScreen(e);
   if (releaseTimer !== undefined) { clearTimeout(releaseTimer); liftFinger(); releaseTimer = undefined; }
