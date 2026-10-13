@@ -3,6 +3,7 @@ import { SyntaxErr } from '../lang/ast';
 import { createEnv } from './env';
 import { Ctx2D, BrainScreen } from './screen';
 import { HelperHost, StopSignal, createHelpers, scopeProxy, stub } from './helpers';
+import { ControllerInput, ControllerScreen } from './controller';
 
 export type RunState = 'idle' | 'running' | 'finished' | 'stopped' | 'error';
 export type LogKind = 'out' | 'err' | 'warn' | 'info';
@@ -36,6 +37,10 @@ export class Runtime implements HelperHost {
   competition: { auton?: unknown; driver?: unknown } = {};
   onLog: (text: string, kind: LogKind) => void = () => {};
   onState: (s: RunState) => void = () => {};
+  /** Live controller input: the UI changes it, programs read it. It outlives runs, so a held key stays held. */
+  readonly controller = new ControllerInput();
+  readonly controllerScreen = new ControllerScreen();
+  private disposers: (() => void)[] = [];
 
   private sleepers = new Set<{ t: ReturnType<typeof setTimeout>; rej: (e: Error) => void }>();
   private runId = 0;
@@ -95,9 +100,10 @@ export class Runtime implements HelperHost {
 
   log(text: string, kind: LogKind = 'out'): void { this.onLog(text, kind); }
 
-  makeDevice(type: string, name: string): unknown {
+  makeDevice(type: string, name: string, args: unknown[] = []): unknown {
     if (type === 'brain') return this.globals.Brain;
     if (type === 'competition') return (this.globals.Competition ?? this.globals.competition)();
+    if (type === 'controller') return this.globals.controller(args[0]);
     return stub(name);
   }
 
@@ -110,10 +116,13 @@ export class Runtime implements HelperHost {
     this.competition = {};
     this.screen.reset();
     this.screen.pythonMode = lang === 'py';
+    for (const d of this.disposers.splice(0)) d();
+    this.controllerScreen.clearScreen();
 
     const env = createEnv({
       screen: this.screen, lang, log: (t, k) => this.onLog(t, k ?? 'out'), sleep: (ms) => this.sleep(ms),
       spawn: (f, a) => this.spawn(f, a), now: () => this.now(), requestStop: () => this.requestStop(), competition: this.competition,
+      controller: this.controller, controllerScreen: this.controllerScreen, onDispose: (fn) => this.disposers.push(fn),
     });
     this.globals = env.globals;
     this.brainObj = env.brainObj;

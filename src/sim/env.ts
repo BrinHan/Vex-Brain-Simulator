@@ -1,6 +1,7 @@
 import { BrainScreen, Kw, screenApi } from './screen';
 import { makeColorFactory } from './color';
 import { CBuf, PyDict, pystr, pyRepr, sortInPlace, sprintf, stub } from './helpers';
+import { ControllerInput, ControllerScreen, createController } from './controller';
 
 export interface EnvHost {
   screen: BrainScreen;
@@ -11,6 +12,9 @@ export interface EnvHost {
   now(): number;
   requestStop(): void;
   competition: { auton?: unknown; driver?: unknown };
+  controller: ControllerInput; // the primary controller, driven by the keyboard / gamepad
+  controllerScreen: ControllerScreen;
+  onDispose(fn: () => void): void; // cleanup when the run is replaced
 }
 
 /** Namespace-like object whose every property is its own qualified name (e.g. Ports.PORT1 -> "Ports.PORT1"). */
@@ -142,6 +146,30 @@ export function createEnv(host: EnvHost): Env {
   const cppDevices = ['motor', 'motor_group', 'inertial', 'controller', 'digital_out', 'digital_in', 'analog_in', 'encoder', 'optical', 'distance', 'rotation',
     'vision', 'gps', 'limit', 'bumper', 'led', 'pot', 'line', 'pneumatics', 'gyro', 'sonar', 'aivision', 'signature', 'triport'];
   for (const n of py ? [...pyDevices, ...cppDevices] : cppDevices) g[n] = (..._a: unknown[]) => stub(n);
+
+  // controllers: the primary one is live; a partner controller exists but nothing drives it
+  const controllers = new Map<string, any>();
+  const makeController = (kind?: unknown): any => {
+    const key = /partner/i.test(String(kind ?? '')) ? 'partner' : 'primary';
+    if (!controllers.has(key)) {
+      const primary = key === 'primary';
+      const { api, dispose } = createController(
+        primary ? host.controller : new ControllerInput(),
+        primary ? host.controllerScreen : new ControllerScreen(),
+        { spawn: (fn, args) => host.spawn(fn, args), format: (a) => host.screen.formatArgs(a, py) },
+      );
+      host.onDispose(dispose);
+      controllers.set(key, api);
+    }
+    return controllers.get(key);
+  };
+  g.controller = makeController;
+  if (py) g.Controller = makeController;
+  else {
+    // robot-config.h in the VEXcode template declares these
+    g.Controller1 = makeController('primary');
+    g.Controller2 = makeController('partner');
+  }
 
   // ---------------------------------------------------------------- console output
   let line = '';
