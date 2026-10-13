@@ -2,6 +2,7 @@
   "name": "vex-brain-sim",
   "version": "0.1.0",
   "description": "VEX V5 Brain screen simulator - paste VEXcode C++ or Python and see it drawn on a virtual Brain",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.cjs",
