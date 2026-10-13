@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VEX Brain Simulator</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23121212'/%3E%3Crect x='5' y='8' width='22' height='14' fill='%23000' stroke='%23e0e0e0' stroke-width='2'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>VEX Brain Simulator</h1>
+      <select id="lang" aria-label="Language">
+        <option value="auto">Auto-detect</option>
+        <option value="cpp">C++</option>
+        <option value="py">Python</option>
+      </select>
+      <button id="open" class="btn" title="Open a .cpp / .hpp / .py file (or drop one on the editor)">Open</button>
+      <button id="save" class="btn" title="Download the editor contents">Save</button>
+      <input type="file" id="file" accept=".cpp,.hpp,.h,.c,.cc,.cxx,.py,.txt" hidden />
+
+      <span class="spacer"></span>
+
+      <div class="segmented" id="layout" role="group" aria-label="Layout">
+        <button data-mode="code" title="Editor only">Code</button>
+        <button data-mode="split" title="Editor and Brain side by side">Split</button>
+        <button data-mode="preview" title="Brain only (Ctrl+B)">Preview</button>
+      </div>
+      <span class="vsep" aria-hidden="true"></span>
+      <button id="run" class="ctl" title="Run (Ctrl+Enter)" aria-label="Run">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 2.5v13l11-6.5z" fill="currentColor" /></svg>
+      </button>
+      <button id="stop" class="ctl stop" title="Stop" aria-label="Stop" disabled>
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="3.5" y="3.5" width="11" height="11" rx="2" fill="currentColor" /></svg>
+      </button>
+    </header>
+
+    <main class="workbench" id="workbench" data-layout="split">
+      <section class="pane" id="editor-pane" aria-label="Code editor">
+        <div class="card editor-card">
+          <div class="bar"><span class="file" id="tab-name">main.cpp</span></div>
+          <div class="editor">
+            <div id="gutter" class="gutter" aria-hidden="true"></div>
+            <div class="code-area">
+              <pre id="hl" class="code-layer hl" aria-hidden="true"></pre>
+              <textarea id="code" class="code-layer input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Program source code"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card terminal" id="terminal">
+          <div class="term-head" id="term-head">
+            <button id="term-toggle" class="chevron" aria-expanded="true" aria-controls="console" title="Collapse terminal">&#9662;</button>
+            <span class="term-title">Terminal</span>
+            <span id="term-badge" class="badge" hidden>0</span>
+            <span class="spacer"></span>
+            <button id="clear-console" class="btn small">Clear</button>
+          </div>
+          <div id="console" class="term-body" role="log" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="pane card" id="view-pane" aria-label="Brain screen">
+        <div class="bar">
+          <span class="device">VEX V5 Brain <span class="dim">480 × 240</span></span>
+          <span class="spacer"></span>
+          <div class="zoom">
+            <button id="zoom-out" class="zoom-btn" title="Zoom out" aria-label="Zoom out">&minus;</button>
+            <button id="zoom-label" class="zoom-label" title="Click to fit the screen to the viewport">100%</button>
+            <button id="zoom-in" class="zoom-btn" title="Zoom in" aria-label="Zoom in">+</button>
+          </div>
+        </div>
+        <div class="subbar" id="subbar" hidden>
+          <select id="entry" hidden aria-hidden="true"></select>
+          <span class="spacer"></span>
+          <span id="comp" hidden>
+            Competition
+            <button id="run-auton" class="btn small">Autonomous</button>
+            <button id="run-driver" class="btn small">Driver control</button>
+          </span>
+        </div>
+        <div class="viewport" id="viewport">
+          <div class="brain" id="brain">
+            <div class="bezel"><canvas id="screen" width="480" height="240" aria-label="Brain touchscreen"></canvas></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="statusbar">
+      <span id="status" class="status idle" role="status">Idle</span>
+      <span id="cursor-pos">Ln 1, Col 1</span>
+      <span id="lang-label">C++</span>
+      <span class="spacer"></span>
+      <span id="touch">Touch: &ndash;</span>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
