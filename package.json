@@ -33,6 +33,12 @@
     },
     "linux": {
       "target": "AppImage"
+    },
+    "artifactName": "VEX-Brain-Simulator-${version}-${os}.${ext}",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
     }
   },
   "devDependencies": {
