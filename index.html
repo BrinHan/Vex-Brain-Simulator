@@ -79,8 +79,14 @@
           </span>
         </div>
         <div class="viewport" id="viewport">
-          <div class="brain" id="brain">
-            <div class="bezel"><canvas id="screen" width="480" height="240" aria-label="Brain touchscreen"></canvas></div>
+          <div class="stage">
+            <div class="brain" id="brain">
+              <div class="bezel"><canvas id="screen" width="480" height="240" aria-label="Brain touchscreen"></canvas></div>
+            </div>
+            <div class="ctrl" id="ctrl" hidden>
+              <span class="ctrl-title">Controller screen</span>
+              <pre class="ctrl-lcd" id="ctrl-lcd" aria-label="Controller screen" aria-live="polite"></pre>
+            </div>
           </div>
         </div>
       </section>

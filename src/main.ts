@@ -237,6 +237,7 @@ async function run(): Promise<void> {
   clearConsole();
   errLine = 0;
   renderGutter();
+  setCtrlVisible(false);
   if (langSel.value === 'auto') log(`Detected ${runLang === 'cpp' ? 'C++' : 'Python'}`, 'info');
   refreshEntries();
   const entry = runLang === 'cpp' && entrySel.value ? entrySel.value : undefined;
@@ -299,6 +300,8 @@ const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 const savedView = Number(store.get('view'));
 let zoom: 'fit' | number = savedView > 0 ? savedView : 'fit';
 const brainEl = $<HTMLDivElement>('brain');
+const ctrlEl = $<HTMLDivElement>('ctrl');
+const stageEl = brainEl.parentElement as HTMLDivElement;
 
 /** Fit: the largest 2:1 screen that leaves the frame and padding inside the viewport. */
 function applyView(): void {
@@ -307,7 +310,8 @@ function applyView(): void {
     const cs = getComputedStyle(viewport);
     const frame = brainEl.offsetWidth - canvas.offsetWidth; // border + padding around the canvas
     const availW = viewport.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - frame;
-    const availH = viewport.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - frame;
+    const below = stageEl.offsetHeight - brainEl.offsetHeight; // the controller screen and the gap above it, if shown
+    const availH = viewport.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - frame - below;
     canvas.style.width = `${Math.max(120, Math.floor(Math.min(availW, availH * 2)))}px`;
   }
   $('zoom-label').textContent = `${Math.round((canvas.clientWidth / SCREEN_W) * 100)}%`;
@@ -375,3 +379,23 @@ void Promise.all([
   document.fonts.load('16px "Brain Mono"'),
   document.fonts.load('16px "Brain Prop"'),
 ]).catch(() => {}).finally(() => void run());
+
+// ---------------------------------------------------------------- controller screen
+const ctrlLcd = $<HTMLPreElement>('ctrl-lcd');
+function setCtrlVisible(v: boolean): void {
+  if (ctrlEl.hidden === !v) return;
+  ctrlEl.hidden = !v;
+  applyView();
+}
+// programs redraw the controller screen many times per frame (clear, set cursor, print...): show it once per frame
+let ctrlPending = false;
+rt.controllerScreen.onChange = (rows) => {
+  if (ctrlPending) return;
+  ctrlPending = true;
+  requestAnimationFrame(() => {
+    ctrlPending = false;
+    const text = rows.join('\n');
+    if (ctrlLcd.textContent !== text) ctrlLcd.textContent = text;
+    if (text.trim()) setCtrlVisible(true);
+  });
+};
