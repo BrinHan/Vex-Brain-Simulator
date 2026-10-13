@@ -11,6 +11,9 @@ Click the screen to touch it, so auto selectors and menus work too.
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 ![Electron](https://img.shields.io/badge/Electron-47848F?logo=electron&logoColor=white)
 ![Languages](https://img.shields.io/badge/runs-C%2B%2B%20%7C%20Python-2ea44f)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue)
+
+### [▶ Open it in your browser](https://brinhan.github.io/Vex-Brain-Simulator/) &nbsp;·&nbsp; [⬇ Download the desktop app](https://github.com/BrinHan/Vex-Brain-Simulator/releases/latest)
 
 <img src="docs/media/hero.png" alt="VEX Brain Simulator: C++ code in the editor on the left, a robot dashboard drawn on the virtual V5 Brain on the right" width="100%">
 
