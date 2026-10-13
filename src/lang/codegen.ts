@@ -115,7 +115,7 @@ export class Codegen {
     if (this.lang === 'cpp' && this.funcs.has(start)) code += `await ${mangle(start)}();\n`;
     if (this.statics.length) code = `let ${this.statics.join(', ')};\n${code}`;
     // `$g` is a scope proxy (see runtime): VEX API names resolve to the simulator and unknown names become stubs
-    return `with ($g) {\nreturn (async () => {\n${code}})();\n}`;
+    return `with ($g) {\nreturn (async () => {\n${this.tracked(code)}})();\n}`;
   }
 
   // ------------------------------------------------------------ python scoping helpers
@@ -319,8 +319,17 @@ export class Codegen {
   }
 
   // ------------------------------------------------------------ statements
+  /** Each statement first records its source line in the enclosing function's `$l` (see `tracked`). */
   stmts(list: Stmt[]): string {
-    return list.map((s) => this.stmt(s)).join('');
+    return list.map((s) => (s.line && s.k !== 'func' && s.k !== 'struct' && s.k !== 'pass' ? `$l = ${s.line};\n` : '') + this.stmt(s)).join('');
+  }
+
+  /**
+   * Wraps a function body so an error escaping it carries the line it was on. Every call has its own `$l`, so
+   * threads running at the same time don't overwrite each other's line; the innermost frame tags the error first.
+   */
+  private tracked(body: string): string {
+    return `let $l = 0;\ntry {\n${body}} catch ($e) { throw $.tagLine($e, $l); }\n`;
   }
 
   private block(list: Stmt[], extra = ''): string {
@@ -508,7 +517,7 @@ export class Codegen {
       if (names.size) hoist = `let ${[...names].map(mangle).join(', ')};\n`;
       if (isMethod && fn.params[0]) hoist += `const ${mangle(fn.params[0].name)} = this;\n`;
     }
-    return `{\n${hoist}${prologue}${this.stmts(fn.body)}}`;
+    return `{\n${hoist}${prologue}${this.tracked(this.stmts(fn.body))}}`;
   }
 
   private funcDecl(fn: FuncDecl): string {
@@ -765,7 +774,7 @@ export class Codegen {
         for (const p of e.params) names.delete(p.name);
         if (names.size) hoist = `let ${[...names].map(mangle).join(', ')};\n`;
       }
-      out = `(async (${sig}) => {\n${hoist}${prologue}${this.stmts(e.body)}})`;
+      out = `(async (${sig}) => {\n${hoist}${prologue}${this.tracked(this.stmts(e.body))}})`;
     } else if (containsCall(e.body) || prologue) {
       out = `(async (${sig}) => {\n${prologue}return ${this.expr(e.body)};\n})`;
     } else {

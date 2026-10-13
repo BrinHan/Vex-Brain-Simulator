@@ -333,6 +333,13 @@ export function createHelpers(host: HelperHost): Record<string, any> {
       }
     },
     isStop: (e: unknown) => e instanceof StopSignal,
+    /** Records the source line an error was thrown on (only the first, innermost tag counts). */
+    tagLine(e: unknown, line: number) {
+      if (line && e instanceof Error && !(e instanceof StopSignal) && (e as { vexLine?: number }).vexLine === undefined) {
+        (e as { vexLine?: number }).vexLine = line;
+      }
+      return e;
+    },
     errval: (e: unknown) => (e instanceof Error ? e.message : String(e)),
     pyerr: (v: unknown) => (v instanceof Error ? v : new Error(typeof v === 'string' ? v : pystr(v))),
     idiv(a: number, b: number) {

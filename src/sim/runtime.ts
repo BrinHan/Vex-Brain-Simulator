@@ -10,6 +10,12 @@ export type LogKind = 'out' | 'err' | 'warn' | 'info';
 /** Turns raw JS errors from generated code into messages a VEX student can act on. */
 export function friendlyError(e: unknown): string {
   if (e instanceof SyntaxErr) return e.line ? `Line ${e.line}: ${e.message}` : e.message;
+  const line = (e as { vexLine?: number } | null)?.vexLine;
+  const text = describeError(e);
+  return line ? `Line ${line}: ${text}` : text;
+}
+
+function describeError(e: unknown): string {
   const msg = e instanceof Error ? e.message : String(e);
   let m = /^(.+) is not defined$/.exec(msg);
   if (m) return `'${m[1]}' is not defined - it is either misspelled, declared later, or not supported by the simulator.`;
