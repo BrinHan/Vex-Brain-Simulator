@@ -134,9 +134,25 @@ describe('C++', () => {
     const { logs } = await exec(`int main() { Brain.Screen.nope(); }`, 'cpp');
     expect(logs[0]).toMatch(/err:.*(not defined|Unknown)/);
   });
+
+  it('reports runtime errors with the line they happened on', async () => {
+    const { logs } = await exec(`int f(int d) {\n  return 10 / d;\n}\nint main() {\n  int a = 1;\n  f(0);\n}`, 'cpp');
+    expect(logs[0]).toMatch(/^err:Line 2: Division by zero/);
+  });
+
+  it('reports the line of an error inside a thread', async () => {
+    const src = `void worker() {\n  wait(10, msec);\n  Brain.Screen.nope();\n}\nint main() {\n  thread t(worker);\n  while (true) wait(5, msec);\n}`;
+    const { logs } = await exec(src, 'cpp', 120);
+    expect(logs.find((l) => l.startsWith('err:'))).toMatch(/^err:Line 3:/);
+  });
 });
 
 describe('Python', () => {
+  it('reports runtime errors with the line they happened on', async () => {
+    const { logs } = await exec(`from vex import *\ntext = "abc"\n\ndef parse():\n    return int(text)\n\nparse()\n`, 'py');
+    expect(logs[0]).toMatch(/^err:Line 5: ValueError/);
+  });
+
   it('draws with keyword arguments and f-strings', async () => {
     const { ops, logs } = await exec(`
 from vex import *
