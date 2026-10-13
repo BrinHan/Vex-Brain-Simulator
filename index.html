@@ -16,6 +16,7 @@
       </select>
       <button id="open" class="btn" title="Open a .cpp / .hpp / .py file (or drop one on the editor)">Open</button>
       <button id="save" class="btn" title="Download the editor contents">Save</button>
+      <button id="share" class="btn" title="Copy a link that opens this program">Share</button>
       <input type="file" id="file" accept=".cpp,.hpp,.h,.c,.cc,.cxx,.py,.txt" hidden />
 
       <span class="spacer"></span>
@@ -100,6 +101,8 @@
       <span class="spacer"></span>
       <span id="touch">Touch: &ndash;</span>
     </footer>
+
+    <div class="toast" id="toast" role="status" hidden></div>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

@@ -286,6 +286,12 @@ kbd.dup { border-color: var(--amber); color: var(--amber); }
 .palette-foot kbd { min-width: 20px; height: 20px; padding: 0 5px; margin-right: 4px; font-size: 11px; line-height: 18px; }
 @media (max-width: 700px) { .palette-foot .dim { display: none; } }
 
+/* ---------------------------------------------------------------- toast */
+.toast {
+  position: fixed; left: 50%; bottom: 48px; transform: translateX(-50%); z-index: 60; max-width: calc(100vw - 32px);
+  padding: 10px 16px; background: var(--text); color: var(--bg); border-radius: 10px; font-weight: 500; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
 /* ---------------------------------------------------------------- status bar */
 .statusbar { display: flex; align-items: center; gap: 20px; height: 30px; padding: 0 calc(var(--gap) + 6px); color: var(--muted); font-size: 12px; flex: none; white-space: nowrap; overflow: hidden; }
 .statusbar span { overflow: hidden; text-overflow: ellipsis; }

@@ -5,6 +5,7 @@ import { guessEntry, listEntries, type Lang } from './lang/compile';
 import { SCREEN_H, SCREEN_W } from './sim/screen';
 import { highlight } from './highlight';
 import { Controls, PAD_ICON } from './controls';
+import { shareLink } from './share';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 
@@ -408,3 +409,22 @@ rt.controllerScreen.onChange = (rows) => {
     if (text.trim()) setCtrlVisible(true);
   });
 };
+
+// ---------------------------------------------------------------- share
+const toast = $<HTMLDivElement>('toast');
+let toastTimer: ReturnType<typeof setTimeout> | undefined;
+function showToast(text: string): void {
+  toast.textContent = text;
+  toast.hidden = false;
+  if (toastTimer !== undefined) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.hidden = true; }, 2500);
+}
+$<HTMLButtonElement>('share').addEventListener('click', async () => {
+  const link = await shareLink({ code: codeEl.value, lang: langSel.value, name: fileName || undefined });
+  try {
+    await navigator.clipboard.writeText(link);
+    showToast(link.length > 8000 ? 'Link copied (it is long, so some apps may cut it off)' : 'Link copied - anyone with it can open this program');
+  } catch {
+    window.prompt('Copy this link:', link);
+  }
+});
