@@ -215,10 +215,11 @@ export class BrainScreen {
   }
 
   // ---------------------------------------------------------------- text
+  /** Noto Sans Mono glyphs advance 0.6em, so the mono size is chosen to fill exactly one character cell. */
   private fontCss(f: FontInfo): string {
     return f.mono
-      ? `${Math.round(f.h * 0.83)}px "Courier New", Consolas, monospace`
-      : `${Math.round(f.h * 0.8)}px Arial, Helvetica, sans-serif`;
+      ? `${(f.w / 0.6).toFixed(1)}px "Brain Mono", "Courier New", monospace`
+      : `${Math.round(f.h * 0.8)}px "Brain Prop", Arial, sans-serif`;
   }
 
   private charWidth(ch: string, f: FontInfo): number {
