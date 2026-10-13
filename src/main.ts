@@ -4,6 +4,7 @@ import { STARTER_CODE, detectLanguage } from './examples';
 import { guessEntry, listEntries, type Lang } from './lang/compile';
 import { SCREEN_H, SCREEN_W } from './sim/screen';
 import { highlight } from './highlight';
+import { Controls, PAD_ICON } from './controls';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 
@@ -351,12 +352,14 @@ function setLayout(l: Layout): void {
   applyView();
 }
 for (const b of layoutButtons) b.addEventListener('click', () => setLayout(b.dataset.mode as Layout));
-// Ctrl+B tucks the code away (and brings it back), like a sidebar
+// Ctrl+B tucks the code away (and brings it back), like a sidebar; Ctrl+K opens the Controls palette
 window.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'b' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    setLayout(layout === 'preview' ? 'split' : 'preview');
-  }
+  if (!(e.ctrlKey || e.metaKey)) return;
+  const k = e.key.toLowerCase();
+  if (k === 'b') setLayout(layout === 'preview' ? 'split' : 'preview');
+  else if (k === 'k') controls.toggle();
+  else return;
+  e.preventDefault();
 });
 // an error while the code is tucked away: the status bar says so, and clicking it reveals the terminal
 statusEl.addEventListener('click', () => { if (rt.state === 'error' && layout === 'preview') setLayout('split'); });
@@ -380,7 +383,12 @@ void Promise.all([
   document.fonts.load('16px "Brain Prop"'),
 ]).catch(() => {}).finally(() => void run());
 
-// ---------------------------------------------------------------- controller screen
+// ---------------------------------------------------------------- controller: keys, gamepad, Controls palette, screen
+const controls = new Controls({ input: rt.controller, load: () => store.get('keys'), save: (j) => store.set('keys', j) });
+const controlsBtn = $<HTMLButtonElement>('controls');
+controlsBtn.insertAdjacentHTML('afterbegin', PAD_ICON);
+controlsBtn.addEventListener('click', () => controls.open());
+
 const ctrlLcd = $<HTMLPreElement>('ctrl-lcd');
 function setCtrlVisible(v: boolean): void {
   if (ctrlEl.hidden === !v) return;

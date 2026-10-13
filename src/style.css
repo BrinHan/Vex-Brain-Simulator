@@ -100,6 +100,9 @@ select { max-width: 180px; text-overflow: ellipsis; }
 .btn:active:not(:disabled) { background: #444; }
 .btn:disabled { opacity: 0.4; cursor: default; }
 .btn.small { height: 26px; padding: 0 10px; font-size: 12px; }
+.icon-btn { display: inline-flex; align-items: center; gap: 7px; padding: 0 12px 0 10px; }
+.icon-btn svg { color: var(--muted); }
+.icon-btn:hover svg { color: var(--text); }
 
 /* Run / Stop: icon-only, gray like a media control; hover shows what the button will do */
 .ctl { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; background: none; border: 0; border-radius: 8px; color: #bdbdbd; cursor: pointer; }
