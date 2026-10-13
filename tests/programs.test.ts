@@ -147,6 +147,44 @@ describe('C++', () => {
   });
 });
 
+describe('Controller', () => {
+  it('reads sticks and buttons and runs pressed() callbacks in C++', async () => {
+    const src = `#include "vex.h"
+using namespace vex;
+controller Controller1 = controller(primary);
+void onA() { printf("A pressed\\n"); }
+int main() {
+  Controller1.ButtonA.pressed(onA);
+  waitUntil(Controller1.ButtonL1.pressing());
+  printf("axis3=%d\\n", Controller1.Axis3.position(percent));
+  Controller1.Screen.setCursor(2, 3);
+  Controller1.Screen.print("Hi %d", 7);
+}`;
+    const { logs, rt } = await exec(src, 'cpp', 150, async (rt) => {
+      rt.controller.setButton('A', true);
+      rt.controller.setAxis(3, 64);
+      await sleep(20);
+      rt.controller.setButton('L1', true);
+    });
+    expect(logs).toContain('out:A pressed');
+    expect(logs).toContain('out:axis3=64');
+    expect(rt.controllerScreen.rows[1]).toBe('  Hi 7');
+    rt.controller.releaseAll();
+  });
+
+  it('works with the Python names and the template Controller1', async () => {
+    const src = `from vex import *
+controller_1 = Controller(PRIMARY)
+while not controller_1.buttonR2.pressing():
+    wait(5, MSEC)
+controller_1.screen.print("x", controller_1.axis1.position())
+`;
+    const { rt } = await exec(src, 'py', 120, (rt) => { rt.controller.setAxis(1, -50); rt.controller.setButton('R2', true); });
+    expect(rt.controllerScreen.rows[0]).toBe('x -50');
+    rt.controller.releaseAll();
+  });
+});
+
 describe('Python', () => {
   it('reports runtime errors with the line they happened on', async () => {
     const { logs } = await exec(`from vex import *\ntext = "abc"\n\ndef parse():\n    return int(text)\n\nparse()\n`, 'py');
