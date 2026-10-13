@@ -273,21 +273,21 @@ export class BrainScreen {
     return String(a);
   }
 
-  print(...args: unknown[]): void {
+  /** print()'s argument handling (python `sep` / `precision` keywords included), also used by the controller screen. */
+  formatArgs(args: unknown[], python: boolean): string {
     const last = args[args.length - 1];
-    const python = last instanceof Kw;
-    const kw = python ? (last as Kw).o : {};
-    const pos = python ? args.slice(0, -1) : args;
-    const text = this.format(pos, python, String(kw.sep ?? ' '), Number(kw.precision ?? 2));
-    this.emit(text);
+    const kw = last instanceof Kw ? last.o : {};
+    const pos = last instanceof Kw ? args.slice(0, -1) : args;
+    return this.format(pos, python || last instanceof Kw, String(kw.sep ?? ' '), Number(kw.precision ?? 2));
+  }
+
+  print(...args: unknown[]): void {
+    this.emit(this.formatArgs(args, false));
   }
 
   /** Python print() with no kwargs still gets python formatting; detect via flag set by the python alias. */
   printPy(...args: unknown[]): void {
-    const last = args[args.length - 1];
-    const kw = last instanceof Kw ? last.o : {};
-    const pos = last instanceof Kw ? args.slice(0, -1) : args;
-    this.emit(this.format(pos, true, String(kw.sep ?? ' '), Number(kw.precision ?? 2)));
+    this.emit(this.formatArgs(args, true));
   }
 
   private emit(text: string): void {
