@@ -98,7 +98,13 @@ while True:
 
 ## Getting started
 
-You need [Node.js](https://nodejs.org/) 18 or newer.
+**No install:** use the [web version](https://brinhan.github.io/Vex-Brain-Simulator/).
+
+**Desktop app:** download the installer for Windows, macOS or Linux from the
+[latest release](https://github.com/BrinHan/Vex-Brain-Simulator/releases/latest). The installers aren't code-signed,
+so Windows SmartScreen or macOS Gatekeeper may warn you the first time you open it.
+
+**From source:** you need [Node.js](https://nodejs.org/) 18 or newer.
 
 ```bash
 git clone https://github.com/BrinHan/Vex-Brain-Simulator.git
@@ -113,7 +119,7 @@ Then open <http://localhost:5173>.
 | ----------------- | -------------------------------------------------- |
 | `npm run dev`     | Web app with hot reload at `http://localhost:5173` |
 | `npm run desktop` | Build, then open the Electron desktop app          |
-| `npm run dist`    | Make an installer for your OS (electron-builder)   |
+| `npm run dist`    | Make an installer for your OS in `release/`        |
 | `npm run build`   | Static site in `dist/` that can be hosted anywhere |
 | `npm test`        | Run the engine tests (Vitest)                      |
 
