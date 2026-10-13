@@ -2,7 +2,13 @@
   "name": "vex-brain-sim",
   "version": "0.1.0",
   "description": "VEX V5 Brain screen simulator - paste VEXcode C++ or Python and see it drawn on a virtual Brain",
+  "author": "Brian Han",
   "license": "MIT",
+  "homepage": "https://brinhan.github.io/Vex-Brain-Simulator/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BrinHan/Vex-Brain-Simulator.git"
+  },
   "private": true,
   "type": "module",
   "main": "dist-electron/main.cjs",
