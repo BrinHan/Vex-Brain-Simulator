@@ -36,6 +36,21 @@ Click the screen to touch it, so auto selectors and menus work too.
 
 ## Demos
 
+### Drive with the controller
+
+Click the Brain screen, then drive with the keyboard: the left stick is <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>
+and the A button is <kbd>H</kbd>. Text sent to `Controller1.Screen` appears under the Brain.
+
+<img src="docs/media/controller-demo.gif" alt="Driving a circle around the Brain screen with the keyboard while the controller screen shows its position" width="100%">
+
+### Change the controls
+
+Click **Controls** (or press <kbd>Ctrl</kbd> + <kbd>K</kbd>) to see every stick direction and button with its key.
+Search the list, pick a control, and press a new key to rebind it. A connected gamepad works too, and its rows
+light up as you press them.
+
+<img src="docs/media/controls.png" alt="The Controls menu: a search box above a list of controller inputs, each with its keyboard key" width="100%">
+
 ### Test an auto selector by tapping it
 
 Open your team's selector file and tap through it as you would on a real Brain. This is
