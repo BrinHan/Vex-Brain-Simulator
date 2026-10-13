@@ -229,6 +229,11 @@ tests/      engine tests and real-world fixtures
 - **Python:** no nested comprehensions, `match`, or generators.
 - `printAt(x, y)` treats `y` as the text baseline. If it doesn't match a real Brain, adjust `ASCENT` in
   `src/sim/screen.ts`. The default font is mono20 (10×20 px, 12 rows × 48 columns).
-- Text uses a browser font, so letter shapes differ from the Brain's. Sizes and positions match.
+- The Brain fonts are Noto Sans Mono (mono) and Noto Sans (prop). VEX doesn't document its typeface, so this is based on
+  what the community has reported. Sizes and positions follow the documented character grid.
 - Python floats and ints are both JavaScript numbers, so `print(5.0)` shows `5`.
-- Runtime errors show the message but not a line number. Syntax errors show both.
+- A runtime error inside a `while` or `for` condition reports the last line that ran inside the loop.
+
+## License
+
+[MIT](LICENSE)
